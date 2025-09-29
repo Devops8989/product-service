@@ -1,0 +1,39 @@
+pipeline {
+   agent any
+
+   environment {
+      IMAGE_NAME = "singhsajal/ecommerce-authservice"
+      DOCKERHUB_CREDENTIALS_ID = 'dockerhub' // Jenkins secret ID
+   }
+
+   stages {
+      stage('Checkout') {
+         steps {
+            git branch: 'staging', url: 'https://github.com/Devops8989/Devops_ecom_authservice.git'
+         }
+      }
+
+      stage('Build Docker Image') {
+         steps {
+            sh 'docker build -t $IMAGE_NAME:latest .'
+         }
+      }
+
+      stage('Push Docker Image') {
+         steps {
+            withDockerRegistry([credentialsId: env.DOCKERHUB_CREDENTIALS_ID, url: '']) {
+               sh 'docker push $IMAGE_NAME:latest'
+            }
+         }
+      }
+   }
+
+   post {
+      failure {
+         echo "❌ Build or push failed."
+      }
+      success {
+         echo "✅ Docker image built and pushed successfully."
+      }
+   }
+}
