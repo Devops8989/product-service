@@ -19,3 +19,5 @@ app.post('/products', (req, res) => {
 });
 
 app.listen(5002, () => console.log('Product Service running on 5002'));
+
+//test 
